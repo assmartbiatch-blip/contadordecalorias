@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de Calorías</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="hero">
+        <h1>Contador de Calorías</h1>
+        <p>Calcula tu metabolismo basal, consulta nutrientes de alimentos y organiza tus comidas diarias.</p>
+        <div class="buttons">
+            <button id="btn-metabolismo" class="btn">
+                <span class="icon">🔥</span>
+                Calcular Metabolismo Basal
+            </button>
+            <button id="btn-alimentos" class="btn">
+                <span class="icon">🥗</span>
+                Ver Calorías y Nutrientes
+            </button>
+            <button id="btn-lista" class="btn">
+                <span class="icon">📝</span>
+                Lista de Comidas Diarias
+            </button>
+        </div>
+    </header>
+
+    <section id="metabolismo" class="section hidden">
+        <h2>Calcular Metabolismo Basal (Harris-Benedict)</h2>
+        <form id="form-metabolismo">
+            <label for="genero">Género:</label>
+            <select id="genero">
+                <option value="hombre">Hombre</option>
+                <option value="mujer">Mujer</option>
+            </select>
+            <label for="edad">Edad (años):</label>
+            <input type="number" id="edad" required>
+            <label for="peso">Peso (kg):</label>
+            <input type="number" id="peso" required>
+            <label for="altura">Altura (cm):</label>
+            <input type="number" id="altura" required>
+            <label for="actividad">Nivel de Actividad:</label>
+            <select id="actividad">
+                <option value="1.2">Sedentario</option>
+                <option value="1.375">Ligero</option>
+                <option value="1.55">Moderado</option>
+                <option value="1.725">Activo</option>
+                <option value="1.9">Muy Activo</option>
+            </select>
+            <button type="submit">Calcular</button>
+        </form>
+        <div id="resultado-metabolismo"></div>
+    </section>
+
+    <section id="alimentos" class="section hidden">
+        <h2>Calorías y Nutrientes de Alimentos</h2>
+        <input type="text" id="buscar-alimento" placeholder="Buscar alimento...">
+        <ul id="lista-alimentos"></ul>
+    </section>
+
+    <section id="lista-diaria" class="section hidden">
+        <h2>Lista de Comidas Diarias</h2>
+        <div>
+            <select id="select-alimento">
+                <option value="">Seleccionar alimento</option>
+            </select>
+            <input type="number" id="cantidad" placeholder="Cantidad (g)" min="1">
+            <button id="agregar-comida">Agregar</button>
+        </div>
+        <ul id="lista-comidas"></ul>
+        <div id="total-calorias">Total Calorías: 0</div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
