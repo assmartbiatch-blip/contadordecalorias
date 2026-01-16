@@ -1,16 +1,13 @@
-// Datos de alimentos (ejemplos)
-const alimentos = {
-    "manzana": { calorias: 52, proteinas: 0.2, carbohidratos: 14, grasas: 0.2 },
-    "banana": { calorias: 89, proteinas: 1.1, carbohidratos: 23, grasas: 0.3 },
-    "pollo": { calorias: 165, proteinas: 31, carbohidratos: 0, grasas: 3.6 },
-    "arroz": { calorias: 130, proteinas: 2.7, carbohidratos: 28, grasas: 0.3 },
-    "leche": { calorias: 61, proteinas: 3.2, carbohidratos: 4.8, grasas: 3.3 },
-    "huevo": { calorias: 155, proteinas: 13, carbohidratos: 1.1, grasas: 11 },
-    "pan": { calorias: 265, proteinas: 9, carbohidratos: 49, grasas: 3.2 },
-    "queso": { calorias: 402, proteinas: 7, carbohidratos: 3.4, grasas: 33 },
-    "tomate": { calorias: 18, proteinas: 0.9, carbohidratos: 3.9, grasas: 0.2 },
-    "espinaca": { calorias: 23, proteinas: 2.9, carbohidratos: 3.6, grasas: 0.4 }
-};
+// API Key para USDA Food Data Central
+const apiKey = 'p1Ngu9cDjRhmhyOn2RFbySMtKbpcla5asFfc4MQH'; // Reemplaza con tu clave API
+
+// Función para traducir texto
+async function translate(text, from = 'es', to = 'en') {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data[0][0][0];
+}
 
 // Lista diaria
 let listaDiaria = [];
@@ -73,43 +70,83 @@ document.getElementById('form-metabolismo').addEventListener('submit', function(
 });
 
 // Mostrar alimentos
-function mostrarAlimentos(filtro = '') {
+async function mostrarAlimentos(filtro = '') {
     const lista = document.getElementById('lista-alimentos');
     lista.innerHTML = '';
-    Object.keys(alimentos).filter(alimento => alimento.includes(filtro.toLowerCase())).forEach(alimento => {
-        const li = document.createElement('li');
-        li.textContent = `${alimento.charAt(0).toUpperCase() + alimento.slice(1)}: ${alimentos[alimento].calorias} cal, Proteínas: ${alimentos[alimento].proteinas}g, Carbohidratos: ${alimentos[alimento].carbohidratos}g, Grasas: ${alimentos[alimento].grasas}g`;
-        lista.appendChild(li);
-    });
+    if (!filtro.trim()) return;
+
+    try {
+        const englishQuery = await translate(filtro);
+        const response = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(englishQuery)}`);
+        const data = await response.json();
+        for (const food of data.foods.slice(0, 10)) {
+            const spanishName = await translate(food.description, 'en', 'es');
+            const nutrients = food.foodNutrients;
+            const calories = nutrients.find(n => n.nutrientName === 'Energy')?.value || 0;
+            const protein = nutrients.find(n => n.nutrientName === 'Protein')?.value || 0;
+            const carbs = nutrients.find(n => n.nutrientName === 'Carbohydrate, by difference')?.value || 0;
+            const fat = nutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0;
+            const li = document.createElement('li');
+            li.textContent = `${spanishName}: ${calories} cal, Proteínas: ${protein}g, Carbohidratos: ${carbs}g, Grasas: ${fat}g`;
+            lista.appendChild(li);
+        }
+    } catch (error) {
+        console.error('Error fetching foods:', error);
+        lista.innerHTML = '<li>Error al cargar alimentos.</li>';
+    }
 }
 
 document.getElementById('buscar-alimento').addEventListener('input', function() {
     mostrarAlimentos(this.value);
 });
 
-mostrarAlimentos();
-
 // Lista diaria
-function actualizarSelectAlimentos() {
-    const select = document.getElementById('select-alimento');
-    select.innerHTML = '<option value="">Seleccionar alimento</option>';
-    Object.keys(alimentos).forEach(alimento => {
-        const option = document.createElement('option');
-        option.value = alimento;
-        option.textContent = alimento.charAt(0).toUpperCase() + alimento.slice(1);
-        select.appendChild(option);
-    });
+let selectedFood = null;
+
+async function buscarAlimentosDiarios(filtro) {
+    const lista = document.getElementById('resultados-busqueda');
+    lista.innerHTML = '';
+    if (!filtro.trim()) return;
+
+    try {
+        const englishQuery = await translate(filtro);
+        const response = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(englishQuery)}`);
+        const data = await response.json();
+        for (const food of data.foods.slice(0, 5)) {
+            const spanishName = await translate(food.description, 'en', 'es');
+            const li = document.createElement('li');
+            li.textContent = spanishName;
+            const btnSeleccionar = document.createElement('button');
+            btnSeleccionar.textContent = 'Seleccionar';
+            btnSeleccionar.addEventListener('click', () => {
+                selectedFood = {
+                    name: spanishName,
+                    nutrients: food.foodNutrients,
+                    fdcId: food.fdcId
+                };
+                lista.innerHTML = `<li>Seleccionado: ${spanishName}</li>`;
+            });
+            li.appendChild(btnSeleccionar);
+            lista.appendChild(li);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        lista.innerHTML = '<li>Error al buscar.</li>';
+    }
 }
 
-actualizarSelectAlimentos();
+document.getElementById('buscar-alimento-diario').addEventListener('input', function() {
+    buscarAlimentosDiarios(this.value);
+});
 
 document.getElementById('agregar-comida').addEventListener('click', function() {
-    const alimento = document.getElementById('select-alimento').value;
     const cantidad = parseFloat(document.getElementById('cantidad').value);
-    if (alimento && cantidad > 0) {
-        listaDiaria.push({ alimento, cantidad });
+    if (selectedFood && cantidad > 0) {
+        listaDiaria.push({ ...selectedFood, cantidad });
         actualizarListaDiaria();
         document.getElementById('cantidad').value = '';
+        selectedFood = null;
+        document.getElementById('resultados-busqueda').innerHTML = '';
     }
 });
 
@@ -118,10 +155,12 @@ function actualizarListaDiaria() {
     lista.innerHTML = '';
     let totalCalorias = 0;
     listaDiaria.forEach((item, index) => {
-        const cal = (alimentos[item.alimento].calorias * item.cantidad) / 100;
+        const nutrients = item.nutrients;
+        const calories = nutrients.find(n => n.nutrientName === 'Energy')?.value || 0;
+        const cal = (calories * item.cantidad) / 100;
         totalCalorias += cal;
         const li = document.createElement('li');
-        li.textContent = `${item.alimento.charAt(0).toUpperCase() + item.alimento.slice(1)}: ${item.cantidad}g - ${cal.toFixed(2)} cal`;
+        li.textContent = `${item.name}: ${item.cantidad}g - ${cal.toFixed(2)} cal`;
         const btnEliminar = document.createElement('button');
         btnEliminar.textContent = 'Eliminar';
         btnEliminar.addEventListener('click', () => {
