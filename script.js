@@ -99,12 +99,24 @@ async function mostrarAlimentos(filtro = '') {
             for (const food of data.foods.slice(0, 10)) {
                 const spanishName = await translate(food.description, 'en', 'es');
                 const nutrients = food.foodNutrients;
+                const servingSize = food.servingSize || 100;
+                const servingUnit = food.servingSizeUnit || 'g';
+                
+                // Normalizar a por 100g
+                const normalize = (value) => servingSize ? (value * 100) / servingSize : value;
+                
                 const calories = nutrients.find(n => n.nutrientName === 'Energy')?.value || 0;
                 const protein = nutrients.find(n => n.nutrientName === 'Protein')?.value || 0;
                 const carbs = nutrients.find(n => n.nutrientName === 'Carbohydrate, by difference')?.value || 0;
                 const fat = nutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0;
+                
+                const caloriesPer100g = normalize(calories);
+                const proteinPer100g = normalize(protein);
+                const carbsPer100g = normalize(carbs);
+                const fatPer100g = normalize(fat);
+                
                 const li = document.createElement('li');
-                li.innerHTML = `<strong style="font-size: 1.1em;">${spanishName}</strong><br><small style="font-size: 0.9em; color: #666;">Calorías: ${calories} cal, Proteínas: ${protein}g, Carbohidratos: ${carbs}g, Grasas: ${fat}g</small>`;
+                li.innerHTML = `<strong style="font-size: 1.1em;">${spanishName}</strong><br><small style="font-size: 0.9em; color: #666;">Nutrientes por 100g: Calorías: ${caloriesPer100g.toFixed(0)} cal, Proteínas: ${proteinPer100g.toFixed(1)}g, Carbohidratos: ${carbsPer100g.toFixed(1)}g, Grasas: ${fatPer100g.toFixed(1)}g</small>`;
                 lista.appendChild(li);
             }
         } else {
@@ -134,6 +146,10 @@ async function buscarAlimentosDiarios(filtro) {
         const data = await response.json();
         for (const food of data.foods.slice(0, 5)) {
             const spanishName = await translate(food.description, 'en', 'es');
+            const servingSize = food.servingSize || 100;
+            const normalize = (value) => servingSize ? (value * 100) / servingSize : value;
+            const nutrients = food.foodNutrients.map(n => ({ ...n, value: normalize(n.value) })); // Normalizar todos los nutrients
+            
             const li = document.createElement('li');
             li.innerHTML = `<strong>${spanishName}</strong>`;
             const btnSeleccionar = document.createElement('button');
@@ -141,7 +157,7 @@ async function buscarAlimentosDiarios(filtro) {
             btnSeleccionar.addEventListener('click', () => {
                 selectedFood = {
                     name: spanishName,
-                    nutrients: food.foodNutrients,
+                    nutrients: nutrients, // Ya normalizados a 100g
                     fdcId: food.fdcId
                 };
                 lista.innerHTML = `<li><strong>Seleccionado: ${spanishName}</strong></li>`;
