@@ -67,14 +67,14 @@ document.getElementById('form-metabolismo').addEventListener('submit', function(
     document.getElementById('resultado-metabolismo').innerHTML = `
         <div class="resultados">
             <div class="resultado">
-                <h3>Harris-Benedict</h3>
+                <h3>🔥 Harris-Benedict</h3>
                 <p>Metabolismo Basal (BMR): <span class="caloria">${bmrHarris.toFixed(2)}</span> calorías/día</p>
                 <p>Calorías Totales Diarias (TDEE): <span class="caloria">${tdeeHarris.toFixed(2)}</span> calorías/día</p>
                 <p>Para perder grasa: <span class="perder">${(tdeeHarris - 500).toFixed(2)}</span> calorías/día</p>
                 <p>Para ganar masa muscular: <span class="ganar">${(tdeeHarris + 500).toFixed(2)}</span> calorías/día</p>
             </div>
             <div class="resultado">
-                <h3>Mifflin-St Jeor</h3>
+                <h3>⚡ Mifflin-St Jeor</h3>
                 <p>Metabolismo Basal (BMR): <span class="caloria">${bmrMifflin.toFixed(2)}</span> calorías/día</p>
                 <p>Calorías Totales Diarias (TDEE): <span class="caloria">${tdeeMifflin.toFixed(2)}</span> calorías/día</p>
                 <p>Para perder grasa: <span class="perder">${(tdeeMifflin - 500).toFixed(2)}</span> calorías/día</p>
