@@ -36,6 +36,7 @@ document.getElementById('btn-alimentos').addEventListener('click', () => toggleS
 document.getElementById('btn-lista').addEventListener('click', () => toggleSection('lista-diaria'));
 
 function toggleSection(sectionId) {
+    console.log('Abriendo sección:', sectionId);
     document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
     document.getElementById(sectionId).classList.remove('hidden');
     if (sectionId === 'alimentos') {
@@ -71,20 +72,29 @@ document.getElementById('form-metabolismo').addEventListener('submit', function(
     const tdeeMifflin = bmrMifflin * actividad;
 
     document.getElementById('resultado-metabolismo').innerHTML = `
+        <p><strong>Metabolismo Basal (BMR):</strong> Es la cantidad mínima de calorías que tu cuerpo necesita para mantener funciones vitales en reposo, como respirar y mantener la temperatura corporal.</p>
+        <p><strong>Calorías Totales Diarias (TDEE):</strong> Incluye el BMR más las calorías quemadas por actividad física. Representa el total de calorías que consumes al día para mantener tu peso actual.</p>
+        <p><strong>Relación:</strong> El TDEE se calcula multiplicando el BMR por un factor de actividad. Para perder o ganar peso, ajusta el TDEE: 500 calorías ≈ 0.5 kg por semana.</p>
         <div class="resultados">
             <div class="resultado">
                 <h3>🔥 Harris-Benedict</h3>
                 <p>Metabolismo Basal (BMR): <span class="caloria">${bmrHarris.toFixed(2)}</span> calorías/día</p>
                 <p>Calorías Totales Diarias (TDEE): <span class="caloria">${tdeeHarris.toFixed(2)}</span> calorías/día</p>
-                <p>Para perder grasa: <span class="perder">${(tdeeHarris - 500).toFixed(2)}</span> calorías/día</p>
-                <p>Para ganar masa muscular: <span class="ganar">${(tdeeHarris + 500).toFixed(2)}</span> calorías/día</p>
+                <p>Mantener peso: <span class="mantener">${tdeeHarris.toFixed(2)}</span> cal (-0%)</p>
+                <p>Perder grasa moderada: <span class="perder-mod">${(tdeeHarris - 250).toFixed(2)}</span> cal (-10%, ≈0.25 kg/sem)</p>
+                <p>Perder grasa: <span class="perder">${(tdeeHarris - 500).toFixed(2)}</span> cal (-20%, ≈0.5 kg/sem)</p>
+                <p>Ganar masa muscular moderada: <span class="ganar-mod">${(tdeeHarris + 250).toFixed(2)}</span> cal (+10%, ≈0.25 kg/sem)</p>
+                <p>Ganar masa muscular: <span class="ganar">${(tdeeHarris + 500).toFixed(2)}</span> cal (+20%, ≈0.5 kg/sem)</p>
             </div>
             <div class="resultado">
                 <h3>⚡ Mifflin-St Jeor</h3>
                 <p>Metabolismo Basal (BMR): <span class="caloria">${bmrMifflin.toFixed(2)}</span> calorías/día</p>
                 <p>Calorías Totales Diarias (TDEE): <span class="caloria">${tdeeMifflin.toFixed(2)}</span> calorías/día</p>
-                <p>Para perder grasa: <span class="perder">${(tdeeMifflin - 500).toFixed(2)}</span> calorías/día</p>
-                <p>Para ganar masa muscular: <span class="ganar">${(tdeeMifflin + 500).toFixed(2)}</span> calorías/día</p>
+                <p>Mantener peso: <span class="mantener">${tdeeMifflin.toFixed(2)}</span> cal (-0%)</p>
+                <p>Perder grasa moderada: <span class="perder-mod">${(tdeeMifflin - 250).toFixed(2)}</span> cal (-10%, ≈0.25 kg/sem)</p>
+                <p>Perder grasa: <span class="perder">${(tdeeMifflin - 500).toFixed(2)}</span> cal (-20%, ≈0.5 kg/sem)</p>
+                <p>Ganar masa muscular moderada: <span class="ganar-mod">${(tdeeMifflin + 250).toFixed(2)}</span> cal (+10%, ≈0.25 kg/sem)</p>
+                <p>Ganar masa muscular: <span class="ganar">${(tdeeMifflin + 500).toFixed(2)}</span> cal (+20%, ≈0.5 kg/sem)</p>
             </div>
         </div>
     `;
@@ -92,6 +102,7 @@ document.getElementById('form-metabolismo').addEventListener('submit', function(
 
 // Mostrar alimentos
 async function mostrarAlimentos(filtro = '') {
+    console.log('Mostrando alimentos con filtro:', filtro);
     const lista = document.getElementById('lista-alimentos');
     lista.innerHTML = '';
     let query = filtro.trim();
@@ -208,10 +219,23 @@ function actualizarListaDiaria() {
     listaDiaria.forEach((item, index) => {
         const nutrients = item.nutrients;
         const calories = nutrients.find(n => n.nutrientName === 'Energy')?.value || 0;
+        const protein = nutrients.find(n => n.nutrientName === 'Protein')?.value || 0;
+        const carbs = nutrients.find(n => n.nutrientName === 'Carbohydrate, by difference')?.value || 0;
+        const fat = nutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0;
+        const sodium = nutrients.find(n => n.nutrientName === 'Sodium, Na')?.value || 0;
+        
         const cal = (calories * item.cantidad) / 100;
+        const prot = (protein * item.cantidad) / 100;
+        const carb = (carbs * item.cantidad) / 100;
+        const grasa = (fat * item.cantidad) / 100;
+        const sod = (sodium * item.cantidad) / 100;
+        
         totalCalorias += cal;
         const li = document.createElement('li');
-        li.innerHTML = `<strong>${item.name}</strong>: ${item.cantidad}g - ${cal.toFixed(2)} cal`;
+        li.innerHTML = `<strong>${item.name}</strong>: ${item.cantidad}g<br>
+        Calorías: ${cal.toFixed(0)} cal<br>
+        Proteínas: ${prot.toFixed(1)}g, Carbohidratos: ${carb.toFixed(1)}g, Grasas: ${grasa.toFixed(1)}g<br>
+        Sodio: ${sod.toFixed(0)}mg`;
         const btnEliminar = document.createElement('button');
         btnEliminar.textContent = 'Eliminar';
         btnEliminar.addEventListener('click', () => {

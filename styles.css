@@ -133,8 +133,23 @@ button[type="submit"]:hover, #agregar-comida:hover {
     font-weight: bold;
 }
 
+.mantener {
+    color: blue;
+    font-weight: bold;
+}
+
+.perder-mod {
+    color: orange;
+    font-weight: bold;
+}
+
 .perder {
     color: green;
+    font-weight: bold;
+}
+
+.ganar-mod {
+    color: purple;
     font-weight: bold;
 }
 
