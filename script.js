@@ -17,7 +17,10 @@ async function translate(text, from = 'es', to = 'en') {
             })
         });
         const data = await response.json();
-        return data.translatedText || text; // Fallback al texto original si falla
+        let translated = data.translatedText || text;
+        // Limpiar traducción: tomar solo la primera opción si hay coma
+        translated = translated.split(',')[0].trim();
+        return translated;
     } catch (error) {
         console.error('Error traduciendo:', error);
         return text; // Retornar texto original
@@ -35,6 +38,9 @@ document.getElementById('btn-lista').addEventListener('click', () => toggleSecti
 function toggleSection(sectionId) {
     document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
     document.getElementById(sectionId).classList.remove('hidden');
+    if (sectionId === 'alimentos') {
+        mostrarAlimentos(); // Mostrar lista por defecto al abrir
+    }
 }
 
 // Calcular metabolismo
@@ -88,19 +94,28 @@ document.getElementById('form-metabolismo').addEventListener('submit', function(
 async function mostrarAlimentos(filtro = '') {
     const lista = document.getElementById('lista-alimentos');
     lista.innerHTML = '';
-    if (!filtro.trim()) return;
+    let query = filtro.trim();
+    if (!query) {
+        query = 'comida'; // Búsqueda por defecto para mostrar alimentos comunes
+    }
 
     try {
-        const englishQuery = await translate(filtro);
+        const englishQuery = await translate(query);
         const url = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(englishQuery)}`;
         const response = await fetch(url);
         const data = await response.json();
         if (data.foods && data.foods.length > 0) {
-            for (const food of data.foods.slice(0, 10)) {
+            // Traducir nombres y ordenar alfabéticamente
+            const foodsWithNames = [];
+            for (const food of data.foods.slice(0, 20)) { // Más resultados para ordenar
                 const spanishName = await translate(food.description, 'en', 'es');
+                foodsWithNames.push({ food, spanishName });
+            }
+            foodsWithNames.sort((a, b) => a.spanishName.localeCompare(b.spanishName));
+            
+            for (const { food, spanishName } of foodsWithNames.slice(0, 10)) {
                 const nutrients = food.foodNutrients;
                 const servingSize = food.servingSize || 100;
-                const servingUnit = food.servingSizeUnit || 'g';
                 
                 // Normalizar a por 100g
                 const normalize = (value) => servingSize ? (value * 100) / servingSize : value;
