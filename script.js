@@ -75,16 +75,11 @@ async function mostrarAlimentos(filtro = '') {
     lista.innerHTML = '';
     if (!filtro.trim()) return;
 
-    console.log('Buscando:', filtro);
     try {
         const englishQuery = await translate(filtro);
-        console.log('Traducido a:', englishQuery);
         const url = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(englishQuery)}`;
-        console.log('URL:', url);
         const response = await fetch(url);
-        console.log('Response status:', response.status);
         const data = await response.json();
-        console.log('Data:', data);
         if (data.foods && data.foods.length > 0) {
             for (const food of data.foods.slice(0, 10)) {
                 // const spanishName = await translate(food.description, 'en', 'es');
@@ -95,7 +90,7 @@ async function mostrarAlimentos(filtro = '') {
                 const carbs = nutrients.find(n => n.nutrientName === 'Carbohydrate, by difference')?.value || 0;
                 const fat = nutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0;
                 const li = document.createElement('li');
-                li.textContent = `${spanishName}: ${calories} cal, Proteínas: ${protein}g, Carbohidratos: ${carbs}g, Grasas: ${fat}g`;
+                li.innerHTML = `<strong style="font-size: 1.1em;">${spanishName}</strong><br><small style="font-size: 0.9em; color: #666;">Calorías: ${calories} cal, Proteínas: ${protein}g, Carbohidratos: ${carbs}g, Grasas: ${fat}g</small>`;
                 lista.appendChild(li);
             }
         } else {
@@ -126,7 +121,7 @@ async function buscarAlimentosDiarios(filtro) {
         for (const food of data.foods.slice(0, 5)) {
             const spanishName = await translate(food.description, 'en', 'es');
             const li = document.createElement('li');
-            li.textContent = spanishName;
+            li.innerHTML = `<strong>${spanishName}</strong>`;
             const btnSeleccionar = document.createElement('button');
             btnSeleccionar.textContent = 'Seleccionar';
             btnSeleccionar.addEventListener('click', () => {
@@ -135,7 +130,7 @@ async function buscarAlimentosDiarios(filtro) {
                     nutrients: food.foodNutrients,
                     fdcId: food.fdcId
                 };
-                lista.innerHTML = `<li>Seleccionado: ${spanishName}</li>`;
+                lista.innerHTML = `<li><strong>Seleccionado: ${spanishName}</strong></li>`;
             });
             li.appendChild(btnSeleccionar);
             lista.appendChild(li);
@@ -171,7 +166,7 @@ function actualizarListaDiaria() {
         const cal = (calories * item.cantidad) / 100;
         totalCalorias += cal;
         const li = document.createElement('li');
-        li.textContent = `${item.name}: ${item.cantidad}g - ${cal.toFixed(2)} cal`;
+        li.innerHTML = `<strong>${item.name}</strong>: ${item.cantidad}g - ${cal.toFixed(2)} cal`;
         const btnEliminar = document.createElement('button');
         btnEliminar.textContent = 'Eliminar';
         btnEliminar.addEventListener('click', () => {
