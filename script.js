@@ -75,20 +75,31 @@ async function mostrarAlimentos(filtro = '') {
     lista.innerHTML = '';
     if (!filtro.trim()) return;
 
+    console.log('Buscando:', filtro);
     try {
         const englishQuery = await translate(filtro);
-        const response = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(englishQuery)}`);
+        console.log('Traducido a:', englishQuery);
+        const url = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(englishQuery)}`;
+        console.log('URL:', url);
+        const response = await fetch(url);
+        console.log('Response status:', response.status);
         const data = await response.json();
-        for (const food of data.foods.slice(0, 10)) {
-            const spanishName = await translate(food.description, 'en', 'es');
-            const nutrients = food.foodNutrients;
-            const calories = nutrients.find(n => n.nutrientName === 'Energy')?.value || 0;
-            const protein = nutrients.find(n => n.nutrientName === 'Protein')?.value || 0;
-            const carbs = nutrients.find(n => n.nutrientName === 'Carbohydrate, by difference')?.value || 0;
-            const fat = nutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0;
-            const li = document.createElement('li');
-            li.textContent = `${spanishName}: ${calories} cal, Proteínas: ${protein}g, Carbohidratos: ${carbs}g, Grasas: ${fat}g`;
-            lista.appendChild(li);
+        console.log('Data:', data);
+        if (data.foods && data.foods.length > 0) {
+            for (const food of data.foods.slice(0, 10)) {
+                // const spanishName = await translate(food.description, 'en', 'es');
+                const spanishName = food.description; // Temporalmente en inglés para probar
+                const nutrients = food.foodNutrients;
+                const calories = nutrients.find(n => n.nutrientName === 'Energy')?.value || 0;
+                const protein = nutrients.find(n => n.nutrientName === 'Protein')?.value || 0;
+                const carbs = nutrients.find(n => n.nutrientName === 'Carbohydrate, by difference')?.value || 0;
+                const fat = nutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0;
+                const li = document.createElement('li');
+                li.textContent = `${spanishName}: ${calories} cal, Proteínas: ${protein}g, Carbohidratos: ${carbs}g, Grasas: ${fat}g`;
+                lista.appendChild(li);
+            }
+        } else {
+            lista.innerHTML = '<li>No se encontraron alimentos.</li>';
         }
     } catch (error) {
         console.error('Error fetching foods:', error);
