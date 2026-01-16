@@ -1,12 +1,27 @@
 // API Key para USDA Food Data Central
 const apiKey = 'p1Ngu9cDjRhmhyOn2RFbySMtKbpcla5asFfc4MQH'; // Reemplaza con tu clave API
 
-// Función para traducir texto
+// Función para traducir texto usando LibreTranslate
 async function translate(text, from = 'es', to = 'en') {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text)}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    return data[0][0][0];
+    try {
+        const url = 'https://translate.argosopentech.com/translate';
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                q: text,
+                source: from,
+                target: to
+            })
+        });
+        const data = await response.json();
+        return data.translatedText || text; // Fallback al texto original si falla
+    } catch (error) {
+        console.error('Error traduciendo:', error);
+        return text; // Retornar texto original
+    }
 }
 
 // Lista diaria
@@ -82,8 +97,7 @@ async function mostrarAlimentos(filtro = '') {
         const data = await response.json();
         if (data.foods && data.foods.length > 0) {
             for (const food of data.foods.slice(0, 10)) {
-                // const spanishName = await translate(food.description, 'en', 'es');
-                const spanishName = food.description; // Temporalmente en inglés para probar
+                const spanishName = await translate(food.description, 'en', 'es');
                 const nutrients = food.foodNutrients;
                 const calories = nutrients.find(n => n.nutrientName === 'Energy')?.value || 0;
                 const protein = nutrients.find(n => n.nutrientName === 'Protein')?.value || 0;
