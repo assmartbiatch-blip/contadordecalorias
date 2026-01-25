@@ -131,7 +131,7 @@ const alimentosDB = [
         sodio: 3,
         nota: "Porción de 100g"
     },
-    
+
     {
         id: 11,
         nombre: "Quinchoncho",
@@ -533,7 +533,6 @@ const alimentosDB = [
         nota: "Sin azúcar añadido"
     }
 ];
-alimentosDB.push(...alimentosAdicionales);
 
 // ==================== VARIABLES GLOBALES ====================
 let listaDiaria = [];
