@@ -151,29 +151,77 @@ function toggleSection(sectionId) {
     }
 }
 
-// ==================== METABOLISMO BASAL (SIN CAMBIOS) ====================
-// (Mantén aquí todo el código de la función calculateMetabolism igual que tienes actualmente)
-// [TODO: Copia y pega aquí TODO el código desde "// Calcular metabolismo" 
-//  hasta el cierre de esa función, es decir, todo lo relacionado con document.getElementById('form-metabolismo')]
+// ==================== METABOLISMO BASAL (TÚ CÓDIGO ORIGINAL) ====================
+// Calcular metabolismo - ESTE ES TU CÓDIGO ORIGINAL
+document.getElementById('form-metabolismo').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const genero = document.getElementById('genero').value;
+    const edad = parseFloat(document.getElementById('edad').value);
+    const peso = parseFloat(document.getElementById('peso').value);
+    const altura = parseFloat(document.getElementById('altura').value);
+    const actividad = parseFloat(document.getElementById('actividad').value);
+
+    // Harris-Benedict
+    let bmrHarris;
+    if (genero === 'hombre') {
+        bmrHarris = 88.362 + (13.397 * peso) + (4.799 * altura) - (5.677 * edad);
+    } else {
+        bmrHarris = 447.593 + (9.247 * peso) + (3.098 * altura) - (4.330 * edad);
+    }
+    const tdeeHarris = bmrHarris * actividad;
+
+    // Mifflin-St Jeor
+    let bmrMifflin;
+    if (genero === 'hombre') {
+        bmrMifflin = (10 * peso) + (6.25 * altura) - (5 * edad) + 5;
+    } else {
+        bmrMifflin = (10 * peso) + (6.25 * altura) - (5 * edad) - 161;
+    }
+    const tdeeMifflin = bmrMifflin * actividad;
+
+    document.getElementById('resultado-metabolismo').innerHTML = `
+        <p><strong>Metabolismo Basal (BMR):</strong> Es la cantidad mínima de calorías que tu cuerpo necesita para mantener funciones vitales en reposo, como respirar y mantener la temperatura corporal.</p>
+        <p><strong>Calorías Totales Diarias (TDEE):</strong> Incluye el BMR más las calorías quemadas por actividad física. Representa el total de calorías que consumes al día para mantener tu peso actual.</p>
+        <p><strong>Relación:</strong> El TDEE se calcula multiplicando el BMR por un factor de actividad. Para perder o ganar peso, ajusta el TDEE: 500 calorías ≈ 0.5 kg por semana.</p>
+        <div class="resultados">
+            <div class="resultado">
+                <h3>🔥 Harris-Benedict</h3>
+                <p>Metabolismo Basal (BMR): <span class="caloria">${bmrHarris.toFixed(2)}</span> calorías/día</p>
+                <p>Calorías Totales Diarias (TDEE): <span class="caloria">${tdeeHarris.toFixed(2)}</span> calorías/día</p>
+                <p>Mantener peso: <span class="mantener">${tdeeHarris.toFixed(2)}</span> cal (-0%)</p>
+                <p>Perder grasa moderada: <span class="perder-mod">${(tdeeHarris - 250).toFixed(2)}</span> cal (-10%, ≈0.25 kg/sem)</p>
+                <p>Perder grasa: <span class="perder">${(tdeeHarris - 500).toFixed(2)}</span> cal (-20%, ≈0.5 kg/sem)</p>
+                <p>Ganar masa muscular moderada: <span class="ganar-mod">${(tdeeHarris + 250).toFixed(2)}</span> cal (+10%, ≈0.25 kg/sem)</p>
+                <p>Ganar masa muscular: <span class="ganar">${(tdeeHarris + 500).toFixed(2)}</span> cal (+20%, ≈0.5 kg/sem)</p>
+            </div>
+            <div class="resultado">
+                <h3>⚡ Mifflin-St Jeor</h3>
+                <p>Metabolismo Basal (BMR): <span class="caloria">${bmrMifflin.toFixed(2)}</span> calorías/día</p>
+                <p>Calorías Totales Diarias (TDEE): <span class="caloria">${tdeeMifflin.toFixed(2)}</span> calorías/día</p>
+                <p>Mantener peso: <span class="mantener">${tdeeMifflin.toFixed(2)}</span> cal (-0%)</p>
+                <p>Perder grasa moderada: <span class="perder-mod">${(tdeeMifflin - 250).toFixed(2)}</span> cal (-10%, ≈0.25 kg/sem)</p>
+                <p>Perder grasa: <span class="perder">${(tdeeMifflin - 500).toFixed(2)}</span> cal (-20%, ≈0.5 kg/sem)</p>
+                <p>Ganar masa muscular moderada: <span class="ganar-mod">${(tdeeMifflin + 250).toFixed(2)}</span> cal (+10%, ≈0.25 kg/sem)</p>
+                <p>Ganar masa muscular: <span class="ganar">${(tdeeMifflin + 500).toFixed(2)}</span> cal (+20%, ≈0.5 kg/sem)</p>
+            </div>
+        </div>
+    `;
+});
 
 // ==================== BUSCAR Y MOSTRAR ALIMENTOS ====================
-// Función para buscar en la base de datos local
 function buscarAlimentosDB(filtro = '') {
     const busqueda = filtro.toLowerCase().trim();
     
     if (!busqueda) {
-        // Si no hay filtro, mostrar todos ordenados
         return alimentosDB.slice().sort((a, b) => a.nombre.localeCompare(b.nombre));
     }
     
-    // Filtrar por nombre o categoría
     return alimentosDB.filter(alimento => 
         alimento.nombre.toLowerCase().includes(busqueda) ||
         alimento.categoria.toLowerCase().includes(busqueda)
     ).sort((a, b) => a.nombre.localeCompare(b.nombre));
 }
 
-// Mostrar alimentos en la sección de consulta
 function mostrarAlimentos(filtro = '') {
     console.log('Buscando alimentos con filtro:', filtro);
     const lista = document.getElementById('lista-alimentos');
@@ -201,7 +249,6 @@ function mostrarAlimentos(filtro = '') {
             lista.appendChild(li);
         });
         
-        // Mostrar contador de resultados
         const contador = document.createElement('p');
         contador.style.fontSize = '0.9em';
         contador.style.color = '#7f8c8d';
@@ -213,20 +260,18 @@ function mostrarAlimentos(filtro = '') {
     }
 }
 
-// Búsqueda en tiempo real
 document.getElementById('buscar-alimento').addEventListener('input', function() {
     mostrarAlimentos(this.value);
 });
 
 // ==================== LISTA DIARIA DE COMIDAS ====================
-// Buscar alimentos para la lista diaria
 function buscarAlimentosDiarios(filtro) {
     const lista = document.getElementById('resultados-busqueda');
     lista.innerHTML = '';
     
     if (!filtro.trim()) return;
     
-    const resultados = buscarAlimentosDB(filtro).slice(0, 5); // Máximo 5 resultados
+    const resultados = buscarAlimentosDB(filtro).slice(0, 5);
     
     if (resultados.length > 0) {
         resultados.forEach(alimento => {
@@ -265,18 +310,15 @@ function buscarAlimentosDiarios(filtro) {
     }
 }
 
-// Búsqueda en tiempo real para lista diaria
 document.getElementById('buscar-alimento-diario').addEventListener('input', function() {
     buscarAlimentosDiarios(this.value);
 });
 
-// Agregar comida a la lista diaria
 document.getElementById('agregar-comida').addEventListener('click', function() {
     const cantidadInput = document.getElementById('cantidad');
     const cantidad = parseFloat(cantidadInput.value);
     
     if (selectedFood && cantidad > 0) {
-        // Calcular nutrientes según la cantidad
         const factor = cantidad / 100;
         
         const comidaAgregada = {
@@ -293,7 +335,6 @@ document.getElementById('agregar-comida').addEventListener('click', function() {
         listaDiaria.push(comidaAgregada);
         actualizarListaDiaria();
         
-        // Limpiar campos
         cantidadInput.value = '';
         selectedFood = null;
         document.getElementById('resultados-busqueda').innerHTML = '';
@@ -303,7 +344,6 @@ document.getElementById('agregar-comida').addEventListener('click', function() {
     }
 });
 
-// Actualizar y mostrar la lista diaria
 function actualizarListaDiaria() {
     const lista = document.getElementById('lista-comidas');
     lista.innerHTML = '';
@@ -350,7 +390,6 @@ function actualizarListaDiaria() {
         lista.appendChild(li);
     });
     
-    // Mostrar totales
     document.getElementById('total-calorias').innerHTML = `
         <div class="total-header">
             <h3>📊 Resumen del Día</h3>
@@ -377,7 +416,6 @@ function actualizarListaDiaria() {
 }
 
 // ==================== INICIALIZACIÓN ====================
-// Mostrar algunos alimentos al cargar la página (opcional)
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Base de datos cargada con', alimentosDB.length, 'alimentos venezolanos');
 });
