@@ -157,3 +157,246 @@ button[type="submit"]:hover, #agregar-comida:hover {
     color: red;
     font-weight: bold;
 }
+
+/* ==================== ESTILOS PARA LA BASE DE DATOS LOCAL ==================== */
+
+/* Badge de categoría - manteniendo tu paleta azul */
+.categoria-badge {
+    display: inline-block;
+    background-color: #e3f2fd;
+    color: #0984e3; /* Usando tu azul principal */
+    font-size: 0.75em;
+    padding: 3px 10px;
+    border-radius: 15px;
+    margin-left: 10px;
+    font-weight: 600;
+    border: 1px solid #74b9ff; /* Tu azul claro */
+}
+
+/* Items de alimentos - integrado con tu diseño */
+.alimento-item {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px; /* Igual que tus .section */
+    margin-bottom: 12px;
+    border-left: 5px solid #0984e3; /* Tu azul principal */
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.alimento-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Resultados de búsqueda para lista diaria */
+.resultado-busqueda {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.resultado-busqueda:hover {
+    background-color: #f0f8ff; /* Azul muy claro */
+    transform: translateX(5px);
+}
+
+.btn-seleccionar {
+    background: linear-gradient(135deg, #2ecc71, #27ae60); /* Verde que combina con azul */
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 5px; /* Igual que tus botones */
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-seleccionar:hover {
+    background: linear-gradient(135deg, #27ae60, #219653);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(39, 174, 96, 0.3);
+}
+
+.seleccionado {
+    background: linear-gradient(135deg, #d5f4e6, #b8e6d0);
+    padding: 12px 15px;
+    border-radius: 8px;
+    color: #27ae60;
+    font-weight: bold;
+    margin: 10px 0;
+    border: 2px solid #2ecc71;
+}
+
+/* Items en lista diaria */
+.comida-item {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-left: 5px solid #9b59b6; /* Púrpura para diferenciar */
+    transition: all 0.2s;
+}
+
+.comida-item:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.comida-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.comida-cantidad {
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+    color: #000;
+    padding: 3px 12px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.comida-nutrientes {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 6px;
+    padding: 5px 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.btn-eliminar {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-eliminar:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3);
+}
+
+/* Totales - integrado con tu diseño de .resultado */
+.total-header {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.total-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.3em;
+}
+
+.total-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 0 0 10px 10px;
+    border: 1px solid #dee2e6;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+}
+
+.stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.stat-label {
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 1em;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+}
+
+/* Emojis en los nutrientes */
+.comida-nutrientes span, .alimento-item small span {
+    margin-right: 8px;
+}
+
+/* Responsive - mejoras para móviles */
+@media (max-width: 768px) {
+    .total-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .resultado-busqueda {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .btn-seleccionar {
+        align-self: flex-end;
+    }
+    
+    .comida-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .comida-cantidad {
+        align-self: flex-start;
+    }
+}
+
+/* Contador de resultados */
+#lista-alimentos p {
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+/* Mejora para las listas existentes */
+#lista-alimentos li, #lista-comidas li {
+    padding: 0; /* Anulamos el padding del estilo base */
+    border-bottom: none; /* Anulamos el borde del estilo base */
+}
+
+#lista-alimentos > li, #lista-comidas > li {
+    margin-bottom: 15px; /* Espacio entre items */
+}
