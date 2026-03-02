@@ -538,6 +538,28 @@ const alimentosDB = [
 let listaDiaria = [];
 let selectedFood = null;
 
+// ==================== FUNCIONES DE LOCALSTORAGE (NUEVAS) ====================
+function guardarListaEnStorage() {
+    localStorage.setItem('gatitoChef_listaDiaria', JSON.stringify(listaDiaria));
+}
+
+function cargarListaDeStorage() {
+    const guardada = localStorage.getItem('gatitoChef_listaDiaria');
+    if (guardada) {
+        try {
+            listaDiaria = JSON.parse(guardada);
+            actualizarListaDiaria(); // Esto actualiza la vista
+        } catch (e) {
+            console.error('Error al cargar lista guardada', e);
+            listaDiaria = [];
+        }
+    }
+}
+
+function limpiarStorage() {
+    localStorage.removeItem('gatitoChef_listaDiaria');
+}
+
 // ==================== MOSTRAR/OCULTAR SECCIONES ====================
 document.getElementById('btn-metabolismo').addEventListener('click', () => toggleSection('metabolismo'));
 document.getElementById('btn-alimentos').addEventListener('click', () => toggleSection('alimentos'));
@@ -552,8 +574,7 @@ function toggleSection(sectionId) {
     }
 }
 
-// ==================== METABOLISMO BASAL (TÚ CÓDIGO ORIGINAL) ====================
-// Calcular metabolismo - ESTE ES TU CÓDIGO ORIGINAL
+// ==================== METABOLISMO BASAL ====================
 document.getElementById('form-metabolismo').addEventListener('submit', function(e) {
     e.preventDefault();
     const genero = document.getElementById('genero').value;
@@ -735,6 +756,7 @@ document.getElementById('agregar-comida').addEventListener('click', function() {
         
         listaDiaria.push(comidaAgregada);
         actualizarListaDiaria();
+        guardarListaEnStorage(); // <-- NUEVO: Guardar en localStorage
         
         cantidadInput.value = '';
         selectedFood = null;
@@ -785,6 +807,7 @@ function actualizarListaDiaria() {
         btnEliminar.addEventListener('click', () => {
             listaDiaria.splice(index, 1);
             actualizarListaDiaria();
+            guardarListaEnStorage(); // <-- NUEVO: Guardar después de eliminar
         });
         
         li.appendChild(btnEliminar);
@@ -819,4 +842,5 @@ function actualizarListaDiaria() {
 // ==================== INICIALIZACIÓN ====================
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Base de datos cargada con', alimentosDB.length, 'alimentos venezolanos');
+    cargarListaDeStorage(); // <-- NUEVO: Cargar lista guardada al iniciar
 });
