@@ -3,13 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador de Calorías</title>
+    <title>Gatito Chef · Contador de Calorías</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Pequeño ajuste para que los gatitos se vean bien */
+        .cat-placeholder {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+    </style>
 </head>
 <body>
     <header class="hero">
-        <h1>Contador de Calorías</h1>
-        <p>Calcula tu metabolismo basal, consulta nutrientes de alimentos y organiza tus comidas diarias.</p>
+        <!-- 🐱 ESPACIO PARA GATO 1: Gatito chef saludando -->
+        <div class="hero-cat-container">
+            <img src="https://placekitten.com/100/100" alt="Gatito cocinero" class="hero-cat" id="catChef1">
+            <!-- NOTA: Reemplaza la URL de arriba por tu imagen de gatito cocinero -->
+        </div>
+        
+        <h1>
+            <span class="cat-icon">🐱</span>
+            Contador de Calorías
+            <span class="cat-icon">👨‍🍳</span>
+        </h1>
+        <p class="hero-subtitle">Calcula tu metabolismo, consulta nutrientes y organiza tus comidas diarias con la ayuda de nuestro chef gatuno</p>
+        
         <div class="buttons">
             <button id="btn-metabolismo" class="btn">
                 <span class="icon">🔥</span>
@@ -26,50 +50,82 @@
         </div>
     </header>
 
+    <!-- SECCIÓN METABOLISMO BASAL -->
     <section id="metabolismo" class="section hidden">
-        <h2>Calcular Metabolismo Basal</h2>
+        <!-- 🐱 ESPACIO PARA GATO 2: Gatito calculando -->
+        <div class="section-cat">
+            <img src="https://placekitten.com/80/80" alt="Gatito calculando" class="section-cat-img" id="catChef2">
+        </div>
+        
+        <h2>⚡ Calcular Metabolismo Basal</h2>
         <form id="form-metabolismo">
             <label for="genero">Género:</label>
             <select id="genero">
                 <option value="hombre">Hombre</option>
                 <option value="mujer">Mujer</option>
             </select>
+            
             <label for="edad">Edad (años):</label>
             <input type="number" id="edad" required>
+            
             <label for="peso">Peso (kg):</label>
             <input type="number" id="peso" required>
+            
             <label for="altura">Altura (cm):</label>
             <input type="number" id="altura" required>
+            
             <label for="actividad">Nivel de Actividad:</label>
             <select id="actividad">
-                <option value="1.2">Sedentario</option>
-                <option value="1.375">Ligero</option>
-                <option value="1.55">Moderado</option>
-                <option value="1.725">Activo</option>
-                <option value="1.9">Muy Activo</option>
+                <option value="1.2">🪑 Sedentario</option>
+                <option value="1.375">🚶 Ligero</option>
+                <option value="1.55">🏃 Moderado</option>
+                <option value="1.725">💪 Activo</option>
+                <option value="1.9">⚡ Muy Activo</option>
             </select>
-            <button type="submit">Calcular</button>
+            
+            <button type="submit" class="btn-primary">Calcular</button>
         </form>
         <div id="resultado-metabolismo"></div>
     </section>
 
+    <!-- SECCIÓN ALIMENTOS -->
     <section id="alimentos" class="section hidden">
-        <h2>Calorías y Nutrientes de Alimentos</h2>
-        <p>Los nutrientes se calculan en base a porciones de 100g.</p>
-        <input type="text" id="buscar-alimento" placeholder="Buscar alimento...">
+        <!-- 🐱 ESPACIO PARA GATO 3: Gatito con cuchara -->
+        <div class="section-cat">
+            <img src="https://placekitten.com/85/85" alt="Gatito chef" class="section-cat-img" id="catChef3">
+        </div>
+        
+        <h2>🥗 Calorías y Nutrientes</h2>
+        <p class="subtle-note">Los nutrientes se calculan en base a porciones de 100g • <strong>40+ alimentos venezolanos</strong></p>
+        
+        <div class="search-container">
+            <input type="text" id="buscar-alimento" placeholder="🔍 Buscar alimento..." class="search-input">
+        </div>
+        
         <ul id="lista-alimentos"></ul>
     </section>
 
+    <!-- SECCIÓN LISTA DIARIA -->
     <section id="lista-diaria" class="section hidden">
-        <h2>Lista de Comidas Diarias</h2>
-        <div>
-            <input type="text" id="buscar-alimento-diario" placeholder="Buscar alimento...">
-            <ul id="resultados-busqueda"></ul>
-            <input type="number" id="cantidad" placeholder="Cantidad (g)" min="1">
-            <button id="agregar-comida">Agregar</button>
+        <!-- 🐱 ESPACIO PARA GATO 4: Gatito feliz comiendo -->
+        <div class="section-cat">
+            <img src="https://placekitten.com/82/82" alt="Gatito feliz" class="section-cat-img" id="catChef4">
         </div>
+        
+        <h2>📝 Lista de Comidas Diarias</h2>
+        
+        <div class="add-food-container">
+            <input type="text" id="buscar-alimento-diario" placeholder="🔍 Buscar alimento..." class="search-input">
+            <ul id="resultados-busqueda" class="search-results"></ul>
+            
+            <div class="quantity-row">
+                <input type="number" id="cantidad" placeholder="Cantidad (g)" min="1" class="quantity-input">
+                <button id="agregar-comida" class="btn-primary btn-add">➕ Agregar</button>
+            </div>
+        </div>
+        
         <ul id="lista-comidas"></ul>
-        <div id="total-calorias">Total Calorías: 0</div>
+        <div id="total-calorias"></div>
     </section>
 
     <script src="script.js"></script>
